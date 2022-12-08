@@ -36,6 +36,11 @@ public class PageRepository {
         pages.add(newPage);
     }
 
+    public void addWordIdToPage(Page page, String word) {
+        int wordId = getIdForWord(word);
+        page.addWordId(wordId);
+    }
+
     public void printPageList() {
         pages.forEach(page -> System.out.println(page.getUrl()));
     }

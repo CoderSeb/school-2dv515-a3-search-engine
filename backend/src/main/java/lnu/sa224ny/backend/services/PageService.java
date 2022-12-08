@@ -20,6 +20,4 @@ public class PageService {
     public List<String> getAllPages() {
         return pageRepository.getAllUrls();
     }
-
-
 }
