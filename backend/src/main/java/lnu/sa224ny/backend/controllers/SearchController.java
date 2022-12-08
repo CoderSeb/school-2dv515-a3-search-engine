@@ -1,6 +1,7 @@
 package lnu.sa224ny.backend.controllers;
 
 
+import lnu.sa224ny.backend.models.PageDTO;
 import lnu.sa224ny.backend.services.PageService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,8 @@ public class SearchController {
     private PageService pageService;
 
     @RequestMapping("/api/search")
-    public String search(@RequestParam String word) {
-        return "Search endpoint for word: " + word;
+    public List<PageDTO> search(@RequestParam String word) {
+        return pageService.search(word);
     }
 
     @RequestMapping("/api/pages")

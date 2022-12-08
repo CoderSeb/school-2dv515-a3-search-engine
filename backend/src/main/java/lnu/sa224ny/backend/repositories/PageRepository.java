@@ -3,7 +3,6 @@ package lnu.sa224ny.backend.repositories;
 import lnu.sa224ny.backend.models.Page;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
@@ -20,6 +19,25 @@ public class PageRepository {
     public PageRepository() {
         this.pages = new ArrayList<>();
         this.wordToId = new HashMap<String, Integer>();
+    }
+
+    public List<Page> getPagesByWordId(String word) {
+        int wordId = 0;
+        List<Page> result = new ArrayList<>();
+        if (wordToId.containsKey(word)) {
+            wordId = wordToId.get(word);
+        } else {
+            return result;
+        }
+
+        int finalWordId = wordId;
+        pages.forEach(page -> {
+            if (page.getWords().contains(finalWordId)) {
+                result.add(page);
+            }
+        });
+
+        return result;
     }
 
     public int getIdForWord(String word) {

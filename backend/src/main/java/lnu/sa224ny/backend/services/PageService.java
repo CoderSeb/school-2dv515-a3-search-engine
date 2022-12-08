@@ -1,5 +1,7 @@
 package lnu.sa224ny.backend.services;
 
+import lnu.sa224ny.backend.models.Page;
+import lnu.sa224ny.backend.models.PageDTO;
 import lnu.sa224ny.backend.repositories.PageRepository;
 import lnu.sa224ny.backend.utils.FileHandler;
 import org.springframework.stereotype.Repository;
@@ -19,5 +21,10 @@ public class PageService {
 
     public List<String> getAllPages() {
         return pageRepository.getAllUrls();
+    }
+
+    public List<PageDTO> search(String word) {
+        List<Page> pageResult = pageRepository.getPagesByWordId(word);
+        return null;
     }
 }
