@@ -21,8 +21,9 @@ public class SearchController {
     private PageService pageService;
 
     @RequestMapping("/api/search")
-    public List<PageDTO> search(@RequestParam String word) {
-        return pageService.search(word);
+    public List<PageDTO> search(@RequestParam String query) {
+        String result = query.replaceAll("\"", "");
+        return pageService.search(result);
     }
 
     @RequestMapping("/api/pages")

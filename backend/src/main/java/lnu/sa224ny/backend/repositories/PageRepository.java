@@ -21,22 +21,17 @@ public class PageRepository {
         this.wordToId = new HashMap<String, Integer>();
     }
 
-    public List<Page> getPagesByWordId(String word) {
-        int wordId = 0;
+    public List<Page> getPagesByWordIds(int[] wordIds) {
         List<Page> result = new ArrayList<>();
-        if (wordToId.containsKey(word)) {
-            wordId = wordToId.get(word);
-        } else {
-            return result;
+
+        for (int i = 0; i < wordIds.length; i++) {
+            int finalI = i;
+            pages.forEach(page -> {
+                if (page.getWords().contains(wordIds[finalI]) && !result.contains(page)) {
+                    result.add(page);
+                }
+            });
         }
-
-        int finalWordId = wordId;
-        pages.forEach(page -> {
-            if (page.getWords().contains(finalWordId)) {
-                result.add(page);
-            }
-        });
-
         return result;
     }
 
@@ -57,10 +52,6 @@ public class PageRepository {
     public void addWordIdToPage(Page page, String word) {
         int wordId = getIdForWord(word);
         page.addWordId(wordId);
-    }
-
-    public void printPageList() {
-        pages.forEach(page -> System.out.println(page.getUrl()));
     }
 
     public List<String> getAllUrls() {

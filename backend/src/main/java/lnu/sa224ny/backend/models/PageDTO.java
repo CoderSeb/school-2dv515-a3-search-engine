@@ -1,9 +1,9 @@
 package lnu.sa224ny.backend.models;
 
 public class PageDTO {
-    private String link;
-    private double score;
-    private double content;
-    private double location;
-    private double pageRank;
+    public String link;
+    public double score;
+    public double content;
+    public double location;
+    public double pageRank;
 }

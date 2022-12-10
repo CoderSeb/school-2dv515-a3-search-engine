@@ -22,4 +22,10 @@ public class Page {
     public void addWordId(int wordId) {
         words.add(wordId);
     }
+
+    public PageDTO mapToDTO() {
+        PageDTO pageDTO = new PageDTO();
+        pageDTO.link = url;
+        return pageDTO;
+    }
 }
