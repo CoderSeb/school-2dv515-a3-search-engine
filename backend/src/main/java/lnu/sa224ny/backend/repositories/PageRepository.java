@@ -8,6 +8,7 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 @AllArgsConstructor
 @Getter
@@ -58,5 +59,14 @@ public class PageRepository {
         List<String> result = new ArrayList<>();
         pages.forEach(page -> result.add(page.getUrl()));
         return result;
+    }
+
+    public Page findByUrl(String url) {
+        for (Page page : pages) {
+            if (Objects.equals(page.getUrl(), url)) {
+                return page;
+            }
+        }
+        return null;
     }
 }

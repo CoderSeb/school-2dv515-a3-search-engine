@@ -6,4 +6,8 @@ public class PageDTO {
     public double content;
     public double location;
     public double pageRank;
+
+    public double getScore() {
+        return score;
+    }
 }
