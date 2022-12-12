@@ -2,6 +2,7 @@ package lnu.sa224ny.backend.controllers;
 
 
 import lnu.sa224ny.backend.models.PageDTO;
+import lnu.sa224ny.backend.models.SearchLevel;
 import lnu.sa224ny.backend.services.PageService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +22,9 @@ public class SearchController {
     private PageService pageService;
 
     @RequestMapping("/api/search")
-    public List<PageDTO> search(@RequestParam String query) {
-        String result = query.replaceAll("\"", "");
-        return pageService.search(result);
+    public List<PageDTO> search(@RequestParam String query, @RequestParam SearchLevel searchLevel) {
+        String result = query.replaceAll("\"", "").toLowerCase();
+        return pageService.search(result, searchLevel);
     }
 
     @RequestMapping("/api/pages")

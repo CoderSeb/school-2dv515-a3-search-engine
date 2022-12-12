@@ -1,7 +1,6 @@
 package lnu.sa224ny.backend.utils;
 
 import lnu.sa224ny.backend.models.Page;
-import lnu.sa224ny.backend.models.Scores;
 import lnu.sa224ny.backend.repositories.PageRepository;
 import lombok.NoArgsConstructor;
 

@@ -3,6 +3,7 @@ package lnu.sa224ny.backend.services;
 import lnu.sa224ny.backend.models.Page;
 import lnu.sa224ny.backend.models.PageDTO;
 import lnu.sa224ny.backend.models.Scores;
+import lnu.sa224ny.backend.models.SearchLevel;
 import lnu.sa224ny.backend.repositories.PageRepository;
 import lnu.sa224ny.backend.utils.FileHandler;
 import org.springframework.stereotype.Service;
@@ -25,28 +26,35 @@ public class PageService {
         return pageRepository.getAllUrls();
     }
 
-    public List<PageDTO> search(String query) {
+    public List<PageDTO> search(String query, SearchLevel searchLevel) {
         String[] words = query.split(" ");
         int[] wordIds = new int[words.length];
         for (int i = 0; i < words.length; i++) {
             wordIds[i] = pageRepository.getIdForWord(words[i]);
         }
+
         List<Page> pageResult = pageRepository.getPagesByWordIds(wordIds);
 
         Scores scores = new Scores(pageResult.size());
 
-        calculatePageRank(pageResult);
-
-        for (int i = 0; i < pageResult.size(); i++) {
-            Page currentPage = pageResult.get(i);
-            scores.content[i] = getFrequencyScore(currentPage, wordIds);
-            scores.location[i] = getLocationScore(currentPage, wordIds);
-        }
-
-        normalize(scores.content, false);
-        normalize(scores.location, true);
-
         List<PageDTO> result = new ArrayList<>();
+
+        switch (searchLevel) {
+            case LOW -> {
+                for (int i = 0; i < pageResult.size(); i++) {
+                    Page currentPage = pageResult.get(i);
+                    scores.content[i] = getFrequencyScore(currentPage, wordIds);
+                }
+                normalize(scores.content, false);
+            }
+            case MEDIUM -> {
+                calculateScores(wordIds, pageResult, scores);
+            }
+            case HIGH -> {
+                calculatePageRank(pageResult);
+                calculateScores(wordIds, pageResult, scores);
+            }
+        }
 
         for (int i = 0; i < pageResult.size(); i++) {
             Page currentPage = pageResult.get(i);
@@ -54,13 +62,23 @@ public class PageService {
             PageDTO pageDTO = new PageDTO();
             pageDTO.link = currentPage.getUrl();
             pageDTO.content = scores.content[i];
-            pageDTO.location = 0.8 * scores.location[i];
-            pageDTO.pageRank = 0.5 * currentPage.getPageRank();
+            pageDTO.location = searchLevel != SearchLevel.LOW ? 0.8 * scores.location[i] : 0.0;
+            pageDTO.pageRank = searchLevel == SearchLevel.HIGH ? 0.5 * currentPage.getPageRank() : 0.0;
             pageDTO.score = pageDTO.content + pageDTO.location + pageDTO.pageRank;
             result.add(pageDTO);
         }
 
         return result.stream().sorted(Comparator.comparing(PageDTO::getScore).reversed()).toList();
+    }
+
+    private void calculateScores(int[] wordIds, List<Page> pageResult, Scores scores) {
+        for (int i = 0; i < pageResult.size(); i++) {
+            Page currentPage = pageResult.get(i);
+            scores.content[i] = getFrequencyScore(currentPage, wordIds);
+            scores.location[i] = getLocationScore(currentPage, wordIds);
+        }
+        normalize(scores.content, false);
+        normalize(scores.location, true);
     }
 
     private double getFrequencyScore(Page page, int[] wordIds) {
@@ -97,17 +115,19 @@ public class PageService {
     }
 
     private void normalize(double[] list, boolean smallIsBetter) {
-        if (smallIsBetter) {
-            double min = getMin(list);
+        if (list.length > 0) {
+            if (smallIsBetter) {
+                double min = getMin(list);
 
-            for (int i = 0; i < list.length; i++) {
-                list[i] = min / Math.max(list[i], 0.00001);
-            }
-        } else {
-            double max = getMax(list);
+                for (int i = 0; i < list.length; i++) {
+                    list[i] = min / Math.max(list[i], 0.00001);
+                }
+            } else {
+                double max = getMax(list);
 
-            for (int i = 0; i < list.length; i++) {
-                list[i] = list[i] / max;
+                for (int i = 0; i < list.length; i++) {
+                    list[i] = list[i] / max;
+                }
             }
         }
     }
