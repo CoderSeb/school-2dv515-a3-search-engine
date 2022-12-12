@@ -2,32 +2,45 @@
   text-align: center;
   margin: 0 auto;
   padding: 1em;
-  width: 800px;
 }
 
-.clusterContainer {
-  text-align: left;
+.linkField {
+  width: 300px;
 }
 
-.clusterContainer > p {
-  font-size: 1.4em;
-  margin: 0;
-  margin-top: .5em;
-  font-weight: bold;
-  border: 1px solid rgb(130, 130, 130);
-  border-radius: 10px;
+.scoreField {
+  width: 120px;
 }
 
-.clusterContainer > ul {
-  list-style-type: none;
-  padding: 0;
-  margin-left: 1em;
-  list-style-position: inside;
+.contentField {
+  width: 120px;
 }
 
-.clusterContainer > ul > li {
-  font-size: 1.2em;
-  margin: 0;
-  margin-top: .1em;
-  font-style: italic;
+.locationField {
+  width: 120px;
+}
+
+.pageRankField {
+  width: 120px;
+}
+
+.searchResultContainer {
+  width: 850px;
+  margin: 1rem auto;
+}
+
+.searchLevelSelect {
+  width: 120px;
+  float: right;
+}
+
+.searchInputContainer {
+  width: 850px;
+  margin: 1rem auto;
+  display: inline-block;
+}
+
+.searchButton {
+  width: 220px;
+  margin: 1rem;
 }

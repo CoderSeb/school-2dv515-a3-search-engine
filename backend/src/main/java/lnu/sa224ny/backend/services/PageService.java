@@ -68,7 +68,11 @@ public class PageService {
             result.add(pageDTO);
         }
 
-        return result.stream().sorted(Comparator.comparing(PageDTO::getScore).reversed()).toList();
+        if (result.size() < 5) {
+            return result.stream().sorted(Comparator.comparing(PageDTO::getScore).reversed()).toList();
+        } else {
+            return result.stream().sorted(Comparator.comparing(PageDTO::getScore).reversed()).toList().subList(0, 5);
+        }
     }
 
     private void calculateScores(int[] wordIds, List<Page> pageResult, Scores scores) {
