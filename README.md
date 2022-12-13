@@ -1,5 +1,25 @@
 # A3 - Search Engine
 
+
+## Starting the application
+
+Prerequisites: Docker Desktop installed and running.
+
+### Commands
+
+```bash
+# Start the application
+docker compose up -d
+```
+
+Visit application @ http://localhost:3000
+
+
+```bash
+# Stop the application and remove it's containers, images and volumes
+docker compose down --rmi all --volumes
+```
+
 ## Description
 
 * In this assignment, you shall implement a basic search engine for Wikipedia articles.
