@@ -22,20 +22,6 @@ public class PageRepository {
         this.wordToId = new HashMap<String, Integer>();
     }
 
-    public List<Page> getPagesByWordIds(int[] wordIds) {
-        List<Page> result = new ArrayList<>();
-
-        for (int i = 0; i < wordIds.length; i++) {
-            int finalI = i;
-            pages.forEach(page -> {
-                if (page.getWords().contains(wordIds[finalI]) && !result.contains(page)) {
-                    result.add(page);
-                }
-            });
-        }
-        return result;
-    }
-
     public int getIdForWord(String word) {
         if (wordToId.containsKey(word)) {
             return wordToId.get(word);

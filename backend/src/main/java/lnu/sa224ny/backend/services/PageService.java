@@ -16,10 +16,21 @@ import java.util.List;
 public class PageService {
     private final PageRepository pageRepository;
 
+    private int searchResults;
+    private double duration;
+
 
     public PageService() {
         FileHandler fileHandler = new FileHandler();
         this.pageRepository = fileHandler.loadFiles();
+    }
+
+    public int getSearchResults() {
+        return this.searchResults;
+    }
+
+    public double getDuration() {
+        return this.duration;
     }
 
     public List<String> getAllPages() {
@@ -27,13 +38,14 @@ public class PageService {
     }
 
     public List<PageDTO> search(String query, SearchLevel searchLevel) {
+        long startTime = System.nanoTime();
         String[] words = query.split(" ");
         int[] wordIds = new int[words.length];
         for (int i = 0; i < words.length; i++) {
             wordIds[i] = pageRepository.getIdForWord(words[i]);
         }
 
-        List<Page> pageResult = pageRepository.getPagesByWordIds(wordIds);
+        List<Page> pageResult = pageRepository.getPages();
 
         Scores scores = new Scores(pageResult.size());
 
@@ -57,16 +69,25 @@ public class PageService {
         }
 
         for (int i = 0; i < pageResult.size(); i++) {
-            Page currentPage = pageResult.get(i);
 
-            PageDTO pageDTO = new PageDTO();
-            pageDTO.link = currentPage.getUrl();
-            pageDTO.content = scores.content[i];
-            pageDTO.location = searchLevel != SearchLevel.LOW ? 0.8 * scores.location[i] : 0.0;
-            pageDTO.pageRank = searchLevel == SearchLevel.HIGH ? 0.5 * currentPage.getPageRank() : 0.0;
-            pageDTO.score = pageDTO.content + pageDTO.location + pageDTO.pageRank;
-            result.add(pageDTO);
+            if (scores.content[i] != 0.0) {
+                Page currentPage = pageResult.get(i);
+
+                PageDTO pageDTO = new PageDTO();
+                pageDTO.link = currentPage.getUrl();
+                pageDTO.content = scores.content[i];
+                pageDTO.location = searchLevel != SearchLevel.LOW ? 0.8 * scores.location[i] : 0.0;
+                pageDTO.pageRank = searchLevel == SearchLevel.HIGH ? 0.5 * currentPage.getPageRank() : 0.0;
+                pageDTO.score = pageDTO.content + pageDTO.location + pageDTO.pageRank;
+                result.add(pageDTO);
+            }
         }
+
+        searchResults = result.size();
+
+        long endTime = System.nanoTime();
+
+        duration = (double) ((endTime - startTime) / 1000000) / 1000;
 
         if (result.size() < 5) {
             return result.stream().sorted(Comparator.comparing(PageDTO::getScore).reversed()).toList();

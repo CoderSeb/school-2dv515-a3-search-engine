@@ -1,15 +1,11 @@
 package lnu.sa224ny.backend.controllers;
 
 
-import lnu.sa224ny.backend.models.PageDTO;
-import lnu.sa224ny.backend.models.SearchLevel;
+import lnu.sa224ny.backend.models.SearchQuery;
+import lnu.sa224ny.backend.models.SearchResult;
 import lnu.sa224ny.backend.services.PageService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,10 +17,14 @@ public class SearchController {
 
     private PageService pageService;
 
-    @RequestMapping("/api/search")
-    public List<PageDTO> search(@RequestParam String query, @RequestParam SearchLevel searchLevel) {
-        String result = query.replaceAll("\"", "").toLowerCase();
-        return pageService.search(result, searchLevel);
+    @PostMapping("/api/search")
+    public SearchResult search(@RequestBody SearchQuery searchQuery) {
+        String result = searchQuery.query.replaceAll("\"", "");
+        SearchResult searchResult = new SearchResult();
+        searchResult.setResults(pageService.search(result, searchQuery.searchLevel));
+        searchResult.setNumberOfResults(pageService.getSearchResults());
+        searchResult.setDuration(pageService.getDuration());
+        return searchResult;
     }
 
     @RequestMapping("/api/pages")
