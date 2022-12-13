@@ -7,7 +7,6 @@ import lnu.sa224ny.backend.services.PageService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 
 @CrossOrigin(origins = "*")
@@ -25,10 +24,5 @@ public class SearchController {
         searchResult.setNumberOfResults(pageService.getSearchResults());
         searchResult.setDuration(pageService.getDuration());
         return searchResult;
-    }
-
-    @RequestMapping("/api/pages")
-    public List<String> getPages() {
-        return pageService.getAllPages();
     }
 }

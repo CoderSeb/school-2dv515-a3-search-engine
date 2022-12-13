@@ -8,9 +8,7 @@ import lnu.sa224ny.backend.repositories.PageRepository;
 import lnu.sa224ny.backend.utils.FileHandler;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class PageService {
@@ -31,10 +29,6 @@ public class PageService {
 
     public double getDuration() {
         return this.duration;
-    }
-
-    public List<String> getAllPages() {
-        return pageRepository.getAllUrls();
     }
 
     public List<PageDTO> search(String query, SearchLevel searchLevel) {
@@ -59,9 +53,7 @@ public class PageService {
                 }
                 normalize(scores.content, false);
             }
-            case MEDIUM -> {
-                calculateScores(wordIds, pageResult, scores);
-            }
+            case MEDIUM -> calculateScores(wordIds, pageResult, scores);
             case HIGH -> {
                 calculatePageRank(pageResult);
                 calculateScores(wordIds, pageResult, scores);
@@ -109,9 +101,10 @@ public class PageService {
     private double getFrequencyScore(Page page, int[] wordIds) {
         double score = 0;
         List<Integer> wordList = page.getWords();
-        for (int i = 0; i < wordList.size(); i++) {
-            for (int j = 0; j < wordIds.length; j++) {
-                if (wordList.get(i) == wordIds[j]) {
+
+        for (Integer integer : wordList) {
+            for (int wordId : wordIds) {
+                if (integer == wordId) {
                     score++;
                 }
             }
@@ -180,8 +173,6 @@ public class PageService {
             for (int j = 0; j < allPages.size(); j++) {
                 pageRanks[j] = iteratePageRank(allPages, allPages.get(j));
             }
-
-
         }
         normalize(pageRanks, false);
         for (int i = 0; i < allPages.size(); i++) {

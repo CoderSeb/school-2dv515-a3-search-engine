@@ -5,10 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @AllArgsConstructor
 @Getter
@@ -19,7 +16,7 @@ public class PageRepository {
 
     public PageRepository() {
         this.pages = new ArrayList<>();
-        this.wordToId = new HashMap<String, Integer>();
+        this.wordToId = new HashMap<>();
     }
 
     public int getIdForWord(String word) {
@@ -39,12 +36,6 @@ public class PageRepository {
     public void addWordIdToPage(Page page, String word) {
         int wordId = getIdForWord(word);
         page.addWordId(wordId);
-    }
-
-    public List<String> getAllUrls() {
-        List<String> result = new ArrayList<>();
-        pages.forEach(page -> result.add(page.getUrl()));
-        return result;
     }
 
     public Page findByUrl(String url) {

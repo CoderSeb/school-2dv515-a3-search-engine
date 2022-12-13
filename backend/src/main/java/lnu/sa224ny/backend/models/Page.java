@@ -34,12 +34,6 @@ public class Page {
         words.add(wordId);
     }
 
-    public PageDTO mapToDTO() {
-        PageDTO pageDTO = new PageDTO();
-        pageDTO.link = url;
-        return pageDTO;
-    }
-
     public boolean hasLinkTo(String url) {
         String searchItem = "/wiki/" + url;
         return links.contains(searchItem);
