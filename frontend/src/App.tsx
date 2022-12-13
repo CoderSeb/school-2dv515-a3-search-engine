@@ -4,6 +4,14 @@ import Form from 'react-bootstrap/Form'
 import Table from 'react-bootstrap/Table'
 import './App.css'
 
+
+
+interface IFullResult {
+  numberOfResults: number,
+  duration: number,
+  results: IResult[]
+}
+
 interface IResult {
   link: string,
   score: number,
@@ -12,17 +20,30 @@ interface IResult {
   pageRank: number
 }
 
+interface IBody {
+  query: string,
+  searchLevel: string
+}
+
 function App() {
-  const [results, setResults] = useState<IResult[]>()
+  const [results, setResults] = useState<IFullResult>()
   const [searchLevel, setSearchLevel] = useState<String>('LOW')
   const [searchQuery, setSearchQuery] = useState('')
 
   const handleSearch = () => {
-    setResults([])
-    fetch(`http://localhost:8080/api/search?query=${searchQuery}&searchLevel=${searchLevel}`)
-      .then(res => res.json())
+    setResults(undefined)
+    fetch(`http://localhost:8080/api/search`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        query: searchQuery,
+        searchLevel: searchLevel
+      })
+    }).then(res => res.json())
       .then(
-        (result: IResult[]) => {
+        (result: IFullResult) => {
           setResults(result)
         }
       )
@@ -38,7 +59,7 @@ function App() {
             <option value="HIGH">Grade A-B</option>
           </Form.Select>
           <Form.Control className="searchInput" type="text" defaultValue={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search..." />
-          <Button className="searchButton" onClick={handleSearch}>Search!</Button>
+          <Button className="searchButton" variant="dark" onClick={handleSearch}>Search!</Button>
         </div>
 
         <div className="searchResultContainer">
@@ -53,7 +74,7 @@ function App() {
               </tr>
             </thead>
             <tbody>
-              {results && results.map((result, index) => (
+              {results && results.results.map((result, index) => (
                 <tr key={index}>
                   <td className="linkField">{result.link}</td>
                   <td className="scoreField">{result.score.toFixed(2)}</td>
@@ -64,6 +85,7 @@ function App() {
               ))}
             </tbody>
           </Table>
+          {results && <p className="resultCount">Found {results.numberOfResults} results in {results.duration} seconds</p>}
         </div>
       </div>
     </div>
