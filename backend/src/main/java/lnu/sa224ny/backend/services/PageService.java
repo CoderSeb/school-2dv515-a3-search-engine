@@ -1,14 +1,19 @@
 package lnu.sa224ny.backend.services;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Service;
+
 import lnu.sa224ny.backend.models.Page;
 import lnu.sa224ny.backend.models.PageDTO;
 import lnu.sa224ny.backend.models.Scores;
 import lnu.sa224ny.backend.models.SearchLevel;
 import lnu.sa224ny.backend.repositories.PageRepository;
 import lnu.sa224ny.backend.utils.FileHandler;
-import org.springframework.stereotype.Service;
-
-import java.util.*;
 
 @Service
 public class PageService {
@@ -16,7 +21,6 @@ public class PageService {
 
     private int searchResults;
     private double duration;
-
 
     public PageService() {
         FileHandler fileHandler = new FileHandler();
@@ -166,17 +170,28 @@ public class PageService {
         return max;
     }
 
+    private void normalizePR(Map<Page, Double> pageRanks) {
+        double max = 0;
+        for (Page page : pageRanks.keySet()) {
+            max = Math.max(max, pageRanks.get(page));
+        }
+        for (Page page : pageRanks.keySet()) {
+            pageRanks.put(page, pageRanks.get(page) / max);
+        }
+    }
+
     private void calculatePageRank(List<Page> allPages) {
         int maxIterations = 20;
-        double[] pageRanks = new double[allPages.size()];
+        Map<Page, Double> pageRanks = new HashMap<>();
         for (int i = 0; i < maxIterations; i++) {
-            for (int j = 0; j < allPages.size(); j++) {
-                pageRanks[j] = iteratePageRank(allPages, allPages.get(j));
+            for (Page page : allPages) {
+                pageRanks.put(page, iteratePageRank(allPages, page));
             }
         }
-        normalize(pageRanks, false);
-        for (int i = 0; i < allPages.size(); i++) {
-            allPages.get(i).setPageRank(pageRanks[i]);
+        normalizePR(pageRanks);
+
+        for (Page page : pageRanks.keySet()) {
+            page.setPageRank(pageRanks.get(page));
         }
     }
 
